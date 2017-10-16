@@ -16,29 +16,39 @@ var height = threediv.clientHeight - 20;
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x4286f4);
-scene.rotation.y = -Math.PI / 4.0; // Start isometric
+//scene.rotation.y = -Math.PI / 4.0; // Start isometric
 var scale = 16;
 var camera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);
-camera.position.z = 40; // Back
-camera.position.y = 40; // Up
-camera.rotation.x = -Math.PI / 4.0; // Down 45 degrees.
+camera.translateZ(2000); // Move back so camera is centered on 0, 0, 0
+
+var cam = new THREE.Object3D(); // Parent for camera to rotate/pan easier
+cam.add(camera);
+scene.add(cam);
+
+// Setup isometri view
+cam.rotateY(Math.PI / 4.0);
+cam.rotateX(-Math.PI / 4.0);
+
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
-var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
-light.position.set(1, 3, 2).normalize();
-scene.add( light );
-scene.add( light.target );
-
-var grid = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
-scene.add(grid);
-
+var world = new THREE.Object3D();
 var islandSpread = 200;
 var numIslands = 30;
 for (var i = 0; i < numIslands; i++)
-    scene.add(generateIsland((0.5 - Math.random()) * islandSpread, (0.5 - Math.random()) * islandSpread));
+    world.add(generateIsland((0.5 - Math.random()) * islandSpread, (0.5 - Math.random()) * islandSpread));
 
+
+var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
+light.position.set(1, 3, 2).normalize();
+world.add( light );
+world.add( light.target );
+
+var grid = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
+world.add(grid);
+
+scene.add(world);
 
 var rotateSpeed = 0.05;
 var moveSpeed = 0.4;
@@ -51,22 +61,30 @@ function update() {
         sprintFactor = 1;
 
 	if (keys.a in keysDown) {
-        scene.position.x += moveSpeed * sprintFactor;
+        cam.translateX(-moveSpeed * sprintFactor);
     }
     else if (keys.d in keysDown) {
-        scene.position.x -= moveSpeed * sprintFactor;
+        cam.translateX(moveSpeed * sprintFactor);
     }
 	if (keys.w in keysDown) {
-        scene.position.z += moveSpeed * sprintFactor;
+        cam.rotateX(Math.PI / 4.0);
+        cam.translateZ(-moveSpeed * sprintFactor);
+        cam.rotateX(-Math.PI / 4.0);
     }
     else if (keys.s in keysDown) {
-        scene.position.z -= moveSpeed * sprintFactor;
+        cam.rotateX(Math.PI / 4.0);
+        cam.translateZ(moveSpeed * sprintFactor);
+        cam.rotateX(-Math.PI / 4.0);
     }
     if (keys.right in keysDown) {
-        scene.rotation.y -= rotateSpeed;
+        cam.rotateX(Math.PI / 4.0);
+        cam.rotateY(rotateSpeed);
+        cam.rotateX(-Math.PI / 4.0);
     }
     else if (keys.left in keysDown) {
-		scene.rotation.y += rotateSpeed;
+        cam.rotateX(Math.PI / 4.0);
+        cam.rotateY(-rotateSpeed);
+        cam.rotateX(-Math.PI / 4.0);
     }
 }
 
