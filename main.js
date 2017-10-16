@@ -1,4 +1,5 @@
 var keysDown = [];
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87 }
 addEventListener("keydown", function(e) {
     e.preventDefault();
     keysDown[e.keyCode] = true;
@@ -33,26 +34,37 @@ scene.add( light );
 
 var axes = new THREE.AxisHelper(3, 3, 3);
 scene.add(axes);
+var grid = new THREE.GridHelper(50, 10, 0x000000, 0x000000);
+scene.add(grid);
 
 var geometry = new THREE.BoxGeometry( 3, 3, 3 );
 var material = new THREE.MeshPhongMaterial( { color: 0x40ef95, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
+
 function update() {
-	if (38 in keysDown) { // UP
-        scene.position.x += 0.5;
-        light.position.x += 0.5;
+	if (keys.d in keysDown) {
+        scene.position.x += 0.2;
+        light.position.x += 0.2;
     }
-    else if (40 in keysDown) { // DOWN
-        scene.position.x -= 0.5;
-        light.position.x += 0.5;
+    else if (keys.a in keysDown) {
+        scene.position.x -= 0.2;
+        light.position.x -= 0.2;
     }
-    if (39 in keysDown) { // RIGHT
+	if (keys.s in keysDown) {
+        scene.position.z += 0.2;
+        light.position.z += 0.2;
+    }
+    else if (keys.w in keysDown) {
+        scene.position.z -= 0.2;
+        light.position.z -= 0.2;
+    }
+    if (keys.right in keysDown) {
 		scene.rotation.y -= 0.05;
         light.rotation.y -= 0.05;
     }
-    else if (37 in keysDown) { // LEFT
+    else if (keys.left in keysDown) {
 		scene.rotation.y += 0.05;
         light.rotation.y += 0.05;
     }
