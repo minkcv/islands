@@ -1,13 +1,26 @@
 var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x40ef95, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var worldSize = 100;
+var blockSize = 5;
+var grid = [];
+for (var i = 0; i < worldSize; i++) {
+    var arr = [];
+    for (var j = 0; j < worldSize; j++)
+        arr.push(false);
+    grid.push(arr);
+}
+
 function generateWorld() {
     var world = new THREE.Object3D();
-    var islandSpacing = 10;
-    var numIslands = 30;
-    for (var i = 0; i < numIslands; i++) {
-        var x = Math.round(islandSpacing - Math.random() * islandSpacing * 2) * 5 + 2.5;
-        var z = Math.round(islandSpacing - Math.random() * islandSpacing * 2) * 5 + 2.5;
-        world.add(generateIsland(x, z));
+    var margin = 5;
+    for (var i = -worldSize / 2 + margin; i < worldSize / 2 - margin; i++) {
+        for (var j = -worldSize / 2 + margin; j < worldSize / 2 - margin; j++) {
+            if (Math.random() < 0.98)
+                continue;
+            
+            var cubes = generateIsland(i, j);
+            cubes.forEach(function(cube){ world.add(cube)});
+        }
     }
 
     var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
@@ -15,20 +28,34 @@ function generateWorld() {
     world.add( light );
     world.add( light.target );
     
-    var grid = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
-    world.add(grid);
+    var gridHelper = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
+    world.add(gridHelper);
     return world;
 }
 
+var templates = [
+    [[0, 0], [0, 1], [1, 0], [1, 1]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1]],
+    [[0, 0], [0, 1], [1, 0], [1, 1]],
+    [[0, 0], [0, 1], [1, 0], [1, 1]],
+    [[0, 0], [0, 1], [1, 0], [1, 1]]
+]
+
 function generateIsland(x, z) {
-    var width = Math.floor(Math.random() * 2) * 5 + 5;
-    //console.log(width);
-    var height = 1; //Math.floor(Math.random() * 3) + 2;
-    var depth = Math.floor(Math.random() * 2) * 5 + 5;
-    var geometry = new THREE.BoxGeometry(width, height, depth);
+    var template = templates[Math.floor(Math.random() * templates.length)];
+    var cubes = [];
+    for (var i = 0; i < template.length; i++)
+        cubes.push(addTile(x + template[i][0], z + template[i][1]));
+
+    return cubes;
+}
+
+function addTile(x, z) {
+    var geometry = new THREE.BoxGeometry(blockSize, 1, blockSize);
     var cube = new THREE.Mesh( geometry, greenMaterial );
-    // Shift up to x and z with additional 2.5 if width ends in 5
-    cube.position.x = x + 2.5 * (Math.floor(width / 5) - 1);
-    cube.position.z = z + 2.5 * (Math.floor(depth / 5) - 1);
+    cube.position.x = x * blockSize + blockSize / 2;
+    cube.position.z = z * blockSize + blockSize / 2;
+    grid[x + worldSize / 2][z + worldSize / 2] = true;
     return cube;
 }
