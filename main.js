@@ -1,7 +1,9 @@
 var keysDown = [];
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16}
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, r: 82}
 addEventListener("keydown", function(e) {
     e.preventDefault();
+    if (e.keyCode == keys.r)
+        location.reload();
     keysDown[e.keyCode] = true;
 }, false);
 

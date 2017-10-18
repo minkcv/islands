@@ -13,13 +13,30 @@ for (var i = 0; i < worldSize; i++) {
 function generateWorld() {
     var world = new THREE.Object3D();
     var margin = 5;
+    var islandCenters = []; // Has empty spaces too.
+    var spacing = 15;
+    var numIslands = 0;
+    var maxIslands = 100;
+    var emptySpaceChance = 0.7;
     for (var i = -worldSize / 2 + margin; i < worldSize / 2 - margin; i++) {
         for (var j = -worldSize / 2 + margin; j < worldSize / 2 - margin; j++) {
-            if (Math.random() < 0.98)
+            if (numIslands >= maxIslands)
                 continue;
-            
-            var cubes = generateIsland(i, j);
-            cubes.forEach(function(cube){ world.add(cube)});
+
+            var point = [i, j];
+            var tooClose = false;
+            islandCenters.forEach(function(center) {
+                if (distance(point, center) < spacing)
+                tooClose = true;
+            });
+            if (tooClose)
+                continue;
+                
+            islandCenters.push(point);
+            if (Math.random() < emptySpaceChance) {
+                var cubes = generateIsland(i, j);
+                cubes.forEach(function(cube){ world.add(cube)});
+            }
         }
     }
 
@@ -33,12 +50,18 @@ function generateWorld() {
     return world;
 }
 
+function distance(d1, d2) {
+    var dx = Math.abs(d1[0] - d2[0]);
+    var dy = Math.abs(d1[1] - d2[1]);
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
 var templates = [
     [[0, 0], [0, 1], [1, 0], [1, 1]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [2, 1], [2, 2], [1, 2], [2, 0], [0, -1], [1, -1]],
     [[0, 0], [0, 1], [1, 0], [1, 1]]
 ]
 
@@ -52,10 +75,12 @@ function generateIsland(x, z) {
 }
 
 function addTile(x, z) {
-    var geometry = new THREE.BoxGeometry(blockSize, 1, blockSize);
+    var height = 2;
+    var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var cube = new THREE.Mesh( geometry, greenMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
+    cube.position.y = height / 2;
     grid[x + worldSize / 2][z + worldSize / 2] = true;
     return cube;
 }
