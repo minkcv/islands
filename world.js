@@ -47,13 +47,11 @@ function generateWorld() {
                 length++;
             }
             else if (length > 0){
-                console.log(length);
                 world.add(addWaterTile(i - worldSize / 2, j - worldSize / 2, length));
                 length = 0;
             }
         }
         if (length > 0){
-            console.log(length);
             world.add(addWaterTile(i - worldSize / 2, j - worldSize / 2, length));
             length = 0;
         }
@@ -76,12 +74,12 @@ function distance(d1, d2) {
 }
 
 var templates = [
-    [[0, 0], [0, 1], [1, 0], [1, 1]],
+    [[0, 0], [0, 1], [1, 0]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [2, 1], [2, 2], [1, 2], [2, 0], [0, -1], [1, -1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1]]
+    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [1, 2], [0, -1]]
 ]
 
 function generateIsland(x, z) {

@@ -46,6 +46,8 @@ scene.add(world);
 var rotateSpeed = 0.05;
 var moveSpeed = 0.4;
 var sprintFactor = 1;
+var maxZoomIn = 2;
+var maxZoomOut = 1;
 
 function update() {
     if (keys.shift in keysDown)
@@ -80,6 +82,18 @@ function update() {
         cam.rotateY(-rotateSpeed);
         cam.rotateX(-Math.PI / 4.0);
         axes.rotateY(rotateSpeed);
+    }
+    if (keys.up in keysDown) {
+        camera.zoom += 0.1;
+        if (camera.zoom > maxZoomIn)
+            camera.zoom = 2;
+        camera.updateProjectionMatrix();
+    }
+    else if (keys.down in keysDown) {
+        camera.zoom -= 0.1;
+        if (camera.zoom < maxZoomOut)
+            camera.zoom = 1;
+        camera.updateProjectionMatrix();
     }
 }
 
