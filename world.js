@@ -1,5 +1,6 @@
 var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x40ef95, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var blueMaterial = new THREE.MeshPhongMaterial( { color: 0x134faf, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var worldSize = 100;
 var blockSize = 5;
 var grid = [];
@@ -39,6 +40,24 @@ function generateWorld() {
             }
         }
     }
+    for (var i = 0; i < grid.length; i++) {
+        var length = 0;
+        for (var j = 0; j < grid[i].length; j++) {
+            if (grid[i][j] === false) {
+                length++;
+            }
+            else if (length > 0){
+                console.log(length);
+                world.add(addWaterTile(i - worldSize / 2, j - worldSize / 2, length));
+                length = 0;
+            }
+        }
+        if (length > 0){
+            console.log(length);
+            world.add(addWaterTile(i - worldSize / 2, j - worldSize / 2, length));
+            length = 0;
+        }
+    }
 
     var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
     light.position.set(1, 3, 2).normalize();
@@ -69,13 +88,12 @@ function generateIsland(x, z) {
     var template = templates[Math.floor(Math.random() * templates.length)];
     var cubes = [];
     for (var i = 0; i < template.length; i++)
-        cubes.push(addTile(x + template[i][0], z + template[i][1]));
+        cubes.push(addTile(x + template[i][0], z + template[i][1], 2));
 
     return cubes;
 }
 
-function addTile(x, z) {
-    var height = 2;
+function addTile(x, z, height) {
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var cube = new THREE.Mesh( geometry, greenMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
@@ -83,4 +101,14 @@ function addTile(x, z) {
     cube.position.y = height / 2;
     grid[x + worldSize / 2][z + worldSize / 2] = true;
     return cube;
+}
+
+function addWaterTile(x, z, length) {
+    var geometry = new THREE.PlaneGeometry(blockSize, blockSize * length);
+    var plane = new THREE.Mesh( geometry, blueMaterial );
+    plane.position.x = x * blockSize + blockSize / 2;
+    plane.position.z = z * blockSize - (length * blockSize / 2);
+    plane.rotation.x = -Math.PI / 2;
+    grid[x + worldSize / 2][z + worldSize / 2] = true;
+    return plane;
 }
