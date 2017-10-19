@@ -47,7 +47,7 @@ var rotateSpeed = 0.05;
 var moveSpeed = 0.4;
 var sprintFactor = 1;
 var maxZoomIn = 2;
-var maxZoomOut = 1;
+var maxZoomOut = 0.1;
 
 function update() {
     if (keys.shift in keysDown)
@@ -86,13 +86,13 @@ function update() {
     if (keys.up in keysDown) {
         camera.zoom += 0.1;
         if (camera.zoom > maxZoomIn)
-            camera.zoom = 2;
+            camera.zoom = maxZoomIn;
         camera.updateProjectionMatrix();
     }
     else if (keys.down in keysDown) {
         camera.zoom -= 0.1;
         if (camera.zoom < maxZoomOut)
-            camera.zoom = 1;
+            camera.zoom = maxZoomOut;
         camera.updateProjectionMatrix();
     }
 }
