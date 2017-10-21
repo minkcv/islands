@@ -85,13 +85,13 @@ function update() {
         axes.rotateY(rotateSpeed);
     }
     if (keys.up in keysDown) {
-        camera.zoom += 0.1;
+        camera.zoom *= 1.1;
         if (camera.zoom > maxZoomIn)
             camera.zoom = maxZoomIn;
         camera.updateProjectionMatrix();
     }
     else if (keys.down in keysDown) {
-        camera.zoom -= 0.1;
+        camera.zoom *= 0.9;
         if (camera.zoom < maxZoomOut)
             camera.zoom = maxZoomOut;
         camera.updateProjectionMatrix();

@@ -22,9 +22,9 @@ for (var i = 0; i < worldSize; i++) {
 function generateWorld() {
     var world = new THREE.Object3D();
     var islandCenters = []; // Has empty spaces too.
-    var spacing = 15;
+    var spacing = 10;
     var numIslands = 0;
-    var maxIslands = 100;
+    var maxIslands = 30;
     var emptySpaceChance = 0.7;
     for (var i = margin; i < worldSize - margin; i++) {
         for (var j = margin; j < worldSize - margin; j++) {
@@ -45,6 +45,7 @@ function generateWorld() {
                 var cubes = generateIsland(i, j);
                 cubes.forEach(function(cube){ world.add(cube)});
             }
+            numIslands++;
         }
     }
     for (var i = 0; i < grid.length; i++) {
@@ -118,7 +119,6 @@ function generateBridges(world, islandCenters) {
                 bridgeStartZ = z;
             }
             if (grid[x][z] !== TILE.WATER && foundWater) {
-                console.log(bridgeStartX + ' ' + bridgeStartZ + ' to ' + x + ' ' + z);
                 var bridgeTiles = addBridge(bridgeStartX, bridgeStartZ, x, z);
                 bridgeTiles.forEach(function(t) {world.add(t)});
                 break;
