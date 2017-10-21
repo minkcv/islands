@@ -3,12 +3,14 @@ var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: t
 var blueMaterial = new THREE.MeshPhongMaterial( { color: 0x134faf, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var worldSize = 100;
+var margin = 5;
 var blockSize = 5;
 var grid = [];
 var TILE = {
-    EMPTY: "EMPTY",
-    GRASS: "GRASS",
-    WATER: "WATER"
+    EMPTY: 'EMPTY',
+    GRASS: 'GRASS',
+    WATER: 'WATER',
+    BRIDGE: 'BRIDG'
 };
 for (var i = 0; i < worldSize; i++) {
     var arr = [];
@@ -19,7 +21,6 @@ for (var i = 0; i < worldSize; i++) {
 
 function generateWorld() {
     var world = new THREE.Object3D();
-    var margin = 5;
     var islandCenters = []; // Has empty spaces too.
     var spacing = 15;
     var numIslands = 0;
@@ -62,7 +63,7 @@ function generateWorld() {
             length = 0;
         }
     }
-    //generateBridges(world, islandCenters);
+    generateBridges(world, islandCenters);
 
     var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
     light.position.set(1, 3, 2).normalize();
@@ -94,6 +95,9 @@ function generateBridges(world, islandCenters) {
         var foundWater = false;
         var bridgeStartX = 0;
         var bridgeStartZ = 0;
+        if (grid[x][z] === TILE.WATER)
+            continue; // Skip empty island centers;
+
         while (length < maxBridgeLength) {
             length++
             if (direction == 0)
@@ -105,7 +109,7 @@ function generateBridges(world, islandCenters) {
             else if (direction == 3)
                 z--;
 
-            if (x < 0 || z < 0 || x > worldSize || z > worldSize)
+            if (x < 0 || z < 0 || x > worldSize - margin || z > worldSize - margin)
                 continue;
             
             if (grid[x][z] === TILE.WATER && !foundWater) {
@@ -114,8 +118,8 @@ function generateBridges(world, islandCenters) {
                 bridgeStartZ = z;
             }
             if (grid[x][z] !== TILE.WATER && foundWater) {
+                console.log(bridgeStartX + ' ' + bridgeStartZ + ' to ' + x + ' ' + z);
                 var bridgeTiles = addBridge(bridgeStartX, bridgeStartZ, x, z);
-                console.log(bridgeStartX + ' ' + x + ' ' + bridgeStartZ + ' ' + z);
                 bridgeTiles.forEach(function(t) {world.add(t)});
                 break;
             }
@@ -133,24 +137,28 @@ var templates = [
 ];
 
 function addBridge(startX, startZ, endX, endZ) {
-    startX -= worldSize / 2;
-    startZ -= worldSize / 2;
-    endX -= worldSize / 2;
-    endZ -= worldSize / 2;
-    var cubes = [];
-    for (var i = 0; i < startX - endX + 1; i++) {
-        cubes.push(addTile(startX + i, startZ, 1));
+    var planes = [];
+    if (startX > endX) { // -X direction
+        for (var i = 0; i < startX - endX; i++) {
+            planes.push(addBridgeTile(startX - i, startZ, 1));
+        }
     }
-    for (var i = 0; j < startZ - endZ + 1; j++) {
-        cubes.push(addTile(startX, startZ + i, 1));
+    if (startZ > endZ) { // -Z direction
+        for (var i = 0; i < startZ - endZ; i++) {
+            planes.push(addBridgeTile(startX, startZ - i, 1));
+        }
     }
-    for (var i = 0; i < endX - startX + 1; i++) {
-        cubes.push(addTile(startX - i, startZ, 1));
+    if (endX > startX) { // +X direction
+        for (var i = 0; i < endX - startX; i++) {
+            planes.push(addBridgeTile(startX + i, startZ, 1));
+        }
     }
-    for (var i = 0; j < endZ - startZ + 1; j++) {
-        cubes.push(addTile(startX, startZ - i, 1));
+    if (endZ > startZ) { // +Z direction
+        for (var i = 0; i < endZ - startZ; i++) {
+            planes.push(addBridgeTile(startX, startZ + i, 1));
+        }
     }
-    return cubes;
+    return planes;
 }
 
 function generateIsland(x, z) {
@@ -170,6 +178,17 @@ function addTile(x, z, height) {
     cube.position.y = height / 2;
     grid[x][z] = TILE.GRASS;
     return cube;
+}
+
+function addBridgeTile(x, z) {
+    var geometry = new THREE.PlaneGeometry(blockSize, blockSize);
+    var plane = new THREE.Mesh( geometry, brownMaterial );
+    plane.position.x = x * blockSize + blockSize / 2;
+    plane.position.z = z * blockSize + blockSize / 2;
+    plane.position.y = 2;
+    plane.rotation.x = -Math.PI / 2;
+    grid[x][z] = TILE.BRIDGE;
+    return plane;
 }
 
 function addWaterTile(x, z, length) {
