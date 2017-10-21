@@ -1,14 +1,12 @@
 var keysDown = [];
 var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, r: 82}
 addEventListener("keydown", function(e) {
-    e.preventDefault();
     if (e.keyCode == keys.r)
         location.reload();
     keysDown[e.keyCode] = true;
 }, false);
 
 addEventListener("keyup", function(e) {
-    e.preventDefault();
     delete keysDown[e.keyCode];
 }, false);
 
@@ -35,6 +33,9 @@ cam.rotateY(Math.PI / 4.0);
 cam.rotateX(-Math.PI / 4.0);
 axes.rotateX(Math.PI / 4.0);
 axes.rotateY(-Math.PI / 4.0);
+
+cam.position.x = worldSize / 2 * blockSize;
+cam.position.z = worldSize / 2 * blockSize;
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);

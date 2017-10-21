@@ -25,8 +25,8 @@ function generateWorld() {
     var numIslands = 0;
     var maxIslands = 100;
     var emptySpaceChance = 0.7;
-    for (var i = -worldSize / 2 + margin; i < worldSize / 2 - margin; i++) {
-        for (var j = -worldSize / 2 + margin; j < worldSize / 2 - margin; j++) {
+    for (var i = margin; i < worldSize - margin; i++) {
+        for (var j = margin; j < worldSize - margin; j++) {
             if (numIslands >= maxIslands)
                 continue;
 
@@ -53,12 +53,12 @@ function generateWorld() {
                 length++;
             }
             else if (length > 0){
-                world.add(addWaterTile(i - worldSize / 2, j - worldSize / 2, length));
+                world.add(addWaterTile(i, j, length));
                 length = 0;
             }
         }
         if (length > 0){
-            world.add(addWaterTile(i - worldSize / 2, worldSize / 2, length));
+            world.add(addWaterTile(i, j, length));
             length = 0;
         }
     }
@@ -70,6 +70,8 @@ function generateWorld() {
     world.add( light.target );
     
     var gridHelper = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
+    gridHelper.position.x = worldSize / 2 * blockSize;
+    gridHelper.position.z = worldSize / 2 * blockSize;
     world.add(gridHelper);
     return world;
 }
@@ -166,7 +168,7 @@ function addTile(x, z, height) {
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
     cube.position.y = height / 2;
-    grid[x + worldSize / 2][z + worldSize / 2] = TILE.GRASS;
+    grid[x][z] = TILE.GRASS;
     return cube;
 }
 
@@ -177,6 +179,6 @@ function addWaterTile(x, z, length) {
     plane.position.z = z * blockSize - (length * blockSize / 2);
     plane.rotation.x = -Math.PI / 2;
     for (var i = -length; i < 0; i++)
-        grid[x + worldSize / 2][i + z + worldSize / 2] = TILE.WATER;
+        grid[x][i + z] = TILE.WATER;
     return plane;
 }
