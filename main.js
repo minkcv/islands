@@ -41,18 +41,18 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
-var world = generateIslandGroup(50, 50);
+var world = generateIslandGroup(worldSize / 2, worldSize / 2);
 scene.add(world);
 
 var rotateSpeed = 0.05;
-var moveSpeed = 0.4;
+var moveSpeed = 1;
 var sprintFactor = 1;
 var maxZoomIn = 2;
 var maxZoomOut = 0.1;
 
 function update() {
     if (keys.shift in keysDown)
-        sprintFactor = 2;
+        sprintFactor = 4;
     else
         sprintFactor = 1;
 

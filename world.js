@@ -2,7 +2,7 @@ var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x40ef95, flatShading:
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var blueMaterial = new THREE.MeshPhongMaterial( { color: 0x134faf, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var worldSize = 100;
+var worldSize = 500;
 var margin = 5;
 var blockSize = 5;
 var grid = [];
@@ -90,7 +90,7 @@ function generateIslandGroup(x, z) {
     world.add( light );
     world.add( light.target );
     
-    var gridHelper = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
+    var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
     gridHelper.position.x = worldSize / 2 * blockSize;
     gridHelper.position.z = worldSize / 2 * blockSize;
     world.add(gridHelper);
