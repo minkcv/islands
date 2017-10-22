@@ -19,34 +19,53 @@ for (var i = 0; i < worldSize; i++) {
     grid.push(arr);
 }
 
-function generateWorld() {
+function generateIslandGroup(x, z) {
     var world = new THREE.Object3D();
     var islandCenters = []; // Has empty spaces too.
     var spacing = 10;
     var numIslands = 0;
     var maxIslands = 30;
     var emptySpaceChance = 0.7;
-    for (var i = margin; i < worldSize - margin; i++) {
-        for (var j = margin; j < worldSize - margin; j++) {
-            if (numIslands >= maxIslands)
-                continue;
-
-            var point = [i, j];
-            var tooClose = false;
-            islandCenters.forEach(function(center) {
-                if (distance(point, center) < spacing)
+    var islandX = x;
+    var islandZ = z;
+    while (numIslands < maxIslands) {
+        var point = [islandX, islandZ];
+        var tooClose = false;
+        islandCenters.forEach(function(center) {
+            if (distance(point, center) < spacing)
                 tooClose = true;
-            });
-            if (tooClose)
-                continue;
-                
-            islandCenters.push(point);
-            if (Math.random() < emptySpaceChance) {
-                var cubes = generateIsland(i, j);
-                cubes.forEach(function(cube){ world.add(cube)});
+        });
+
+        if (tooClose) {
+            if (Math.random() > 0.5) {
+                if (Math.random() > 0.5)
+                    islandX += spacing;
+                else
+                    islandX -= spacing;
             }
-            numIslands++;
+            else {
+                if (Math.random() > 0.5)
+                    islandZ += spacing;
+                else
+                    islandZ -= spacing;
+            }
+            if (islandX < margin)
+                islandX = margin;
+            else if (islandX > worldSize - margin)
+                islandX = worldSize - margin;
+            if (islandZ < margin)
+                islandZ = margin;
+            else if (islandZ > worldSize - margin)
+                islandZ = worldSize - margin;
+            continue;
         }
+            
+        islandCenters.push(point);
+        if (Math.random() < emptySpaceChance) {
+            var cubes = generateIsland(islandX, islandZ);
+            cubes.forEach(function(cube){ world.add(cube)});
+        }
+        numIslands++;
     }
     for (var i = 0; i < grid.length; i++) {
         var length = 0;

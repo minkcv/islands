@@ -41,7 +41,7 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
-var world = generateWorld();
+var world = generateIslandGroup(50, 50);
 scene.add(world);
 
 var rotateSpeed = 0.05;
