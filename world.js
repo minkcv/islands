@@ -29,37 +29,36 @@ function generateIslandGroup(x, z) {
     var islandX = x;
     var islandZ = z;
     while (numIslands < maxIslands) {
+        if (Math.random() > 0.5) {
+            if (Math.random() > 0.5)
+                islandX += spacing;
+            else
+                islandX -= spacing;
+        }
+        else {
+            if (Math.random() > 0.5)
+                islandZ += spacing;
+            else
+                islandZ -= spacing;
+        }
+        if (islandX < margin)
+            islandX = margin;
+        else if (islandX > worldSize - margin)
+            islandX = worldSize - margin;
+        if (islandZ < margin)
+            islandZ = margin;
+        else if (islandZ > worldSize - margin)
+            islandZ = worldSize - margin;
+
         var point = [islandX, islandZ];
         var tooClose = false;
         islandCenters.forEach(function(center) {
             if (distance(point, center) < spacing)
                 tooClose = true;
         });
-
-        if (tooClose) {
-            if (Math.random() > 0.5) {
-                if (Math.random() > 0.5)
-                    islandX += spacing;
-                else
-                    islandX -= spacing;
-            }
-            else {
-                if (Math.random() > 0.5)
-                    islandZ += spacing;
-                else
-                    islandZ -= spacing;
-            }
-            if (islandX < margin)
-                islandX = margin;
-            else if (islandX > worldSize - margin)
-                islandX = worldSize - margin;
-            if (islandZ < margin)
-                islandZ = margin;
-            else if (islandZ > worldSize - margin)
-                islandZ = worldSize - margin;
+        if (tooClose) // Try again to find a new spot.
             continue;
-        }
-            
+
         islandCenters.push(point);
         if (Math.random() < emptySpaceChance) {
             var cubes = generateIsland(islandX, islandZ);
