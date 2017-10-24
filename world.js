@@ -2,15 +2,18 @@ var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x40ef95, flatShading:
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var blueMaterial = new THREE.MeshPhongMaterial( { color: 0x134faf, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var grayMaterial = new THREE.MeshPhongMaterial( { color: 0x888888, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var worldSize = 500;
 var margin = 5;
 var blockSize = 5;
 var grid = [];
 var TILE = {
-    EMPTY: 'EMPTY',
-    GRASS: 'GRASS',
-    WATER: 'WATER',
-    BRIDGE: 'BRIDG'
+    EMPTY:  'EMPTY',
+    GRASS:  'GRASS',
+    WATER:  'WATER',
+    BRIDGE: 'BRIDG',
+    GAP:    'GAP  ', // Like empty, but won't be filled by code that generates things.
+    STONE:  'STONE'
 };
 for (var i = 0; i < worldSize; i++) {
     var arr = [];
@@ -26,6 +29,9 @@ function generateIslandGroup(x, z) {
     var numIslands = 0;
     var maxIslands = 30;
     var emptySpaceChance = 0.7;
+    islandCenters.push([x, z])
+    var wellCubes = createWell(x, z);
+    wellCubes.forEach(function(cube) {world.add(cube)});
     while (numIslands < maxIslands) {
         var islandX = x;
         var islandZ = z;
@@ -93,6 +99,32 @@ function distance(d1, d2) {
     var dx = Math.abs(d1[0] - d2[0]);
     var dy = Math.abs(d1[1] - d2[1]);
     return Math.sqrt(dx * dx + dy * dy);
+}
+
+function createWell(x, z) {
+    var radius = 5;
+    var width = 1;
+    var innerRadius = radius - width;
+    var cubes = [];
+    for (var i = -radius; i <= radius; i++) {
+        for (var j = -radius; j <= radius; j++) {
+            if (Math.abs(i + j) > radius ||
+                Math.abs(i - j) > radius)
+            {
+                //grid[x +i][z + j] = TILE.EMPTYGAP;
+                continue;
+            }
+            if (Math.abs(i + j) > innerRadius ||
+                Math.abs(i - j) > innerRadius)
+            {
+                grid[x + i][z + j] = TILE.STONE;
+                cubes.push(addWellTile(x + i, z + j));
+                continue;
+            }
+            grid[x +i][z + j] = TILE.GAP;
+        }
+    }
+    return cubes;
 }
 
 function generateBridges(world, islandCenters) {
@@ -211,4 +243,15 @@ function addWaterTile(x, z, length) {
     for (var i = -length; i < 0; i++)
         grid[x][i + z] = TILE.WATER;
     return plane;
+}
+
+function addWellTile(x, z) {
+    var height = 50;
+    var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
+    var cube = new THREE.Mesh( geometry, grayMaterial );
+    cube.position.x = x * blockSize + blockSize / 2;
+    cube.position.z = z * blockSize + blockSize / 2;
+    cube.position.y = -height / 2 + 2;
+    grid[x][z] = TILE.STONE;
+    return cube;
 }

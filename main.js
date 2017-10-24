@@ -48,6 +48,7 @@ scene.add(world);
 var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
 gridHelper.position.x = worldSize / 2 * blockSize;
 gridHelper.position.z = worldSize / 2 * blockSize;
+world.add(gridHelper);
 */
 
 var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
