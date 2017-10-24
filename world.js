@@ -26,45 +26,48 @@ function generateIslandGroup(x, z) {
     var numIslands = 0;
     var maxIslands = 30;
     var emptySpaceChance = 0.7;
-    var islandX = x;
-    var islandZ = z;
     while (numIslands < maxIslands) {
-        if (Math.random() > 0.5) {
-            if (Math.random() > 0.5)
+        var islandX = x;
+        var islandZ = z;
+        var placed = false;
+        var dir = Math.floor(Math.random() * 4);
+        while (!placed) {
+            if (dir == 0)
                 islandX += spacing;
-            else
+            else if (dir == 1)
                 islandX -= spacing;
-        }
-        else {
-            if (Math.random() > 0.5)
+            else if (dir == 2)
                 islandZ += spacing;
-            else
+            else if (dir == 3)
                 islandZ -= spacing;
+            
+            if (islandX < margin)
+                islandX = margin;
+            else if (islandX > worldSize - margin)
+                islandX = worldSize - margin;
+            if (islandZ < margin)
+                islandZ = margin;
+            else if (islandZ > worldSize - margin)
+                islandZ = worldSize - margin;
+                
+            var tooClose = false;
+            islandCenters.forEach(function(center) {
+                if (distance([islandX, islandZ], center) < spacing)
+                    tooClose = true;
+            });
+            if (tooClose) { // Try again to find a new spot.
+                dir = Math.floor(Math.random() * 4);
+            }
+            else
+                placed = true;
         }
-        if (islandX < margin)
-            islandX = margin;
-        else if (islandX > worldSize - margin)
-            islandX = worldSize - margin;
-        if (islandZ < margin)
-            islandZ = margin;
-        else if (islandZ > worldSize - margin)
-            islandZ = worldSize - margin;
 
-        var point = [islandX, islandZ];
-        var tooClose = false;
-        islandCenters.forEach(function(center) {
-            if (distance(point, center) < spacing)
-                tooClose = true;
-        });
-        if (tooClose) // Try again to find a new spot.
-            continue;
-
-        islandCenters.push(point);
+        islandCenters.push([islandX, islandZ]);
         if (Math.random() < emptySpaceChance) {
             var cubes = generateIsland(islandX, islandZ);
             cubes.forEach(function(cube){ world.add(cube)});
+            numIslands++;
         }
-        numIslands++;
     }
     for (var i = 0; i < grid.length; i++) {
         var length = 0;
@@ -83,16 +86,6 @@ function generateIslandGroup(x, z) {
         }
     }
     generateBridges(world, islandCenters);
-
-    var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
-    light.position.set(1, 3, 2).normalize();
-    world.add( light );
-    world.add( light.target );
-    
-    var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
-    gridHelper.position.x = worldSize / 2 * blockSize;
-    gridHelper.position.z = worldSize / 2 * blockSize;
-    world.add(gridHelper);
     return world;
 }
 

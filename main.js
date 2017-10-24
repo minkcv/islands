@@ -44,6 +44,17 @@ threediv.appendChild(renderer.domElement);
 var world = generateIslandGroup(worldSize / 2, worldSize / 2);
 scene.add(world);
 
+/*
+var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
+gridHelper.position.x = worldSize / 2 * blockSize;
+gridHelper.position.z = worldSize / 2 * blockSize;
+*/
+
+var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
+light.position.set(1, 3, 2).normalize();
+world.add( light );
+world.add( light.target );
+
 var rotateSpeed = 0.05;
 var moveSpeed = 1;
 var sprintFactor = 1;
