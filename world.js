@@ -103,25 +103,26 @@ function distance(d1, d2) {
 
 function createWell(x, z) {
     var radius = 5;
-    var width = 1;
-    var innerRadius = radius - width;
+    var innerRadius = 4;
     var cubes = [];
+    for (var i = -innerRadius; i <= innerRadius; i++) {
+        for (var j = -innerRadius; j <= innerRadius; j++) {
+            if (Math.abs(i + j) < 1.5 * innerRadius &&
+                Math.abs(i - j) < 1.5 * innerRadius)
+            {
+                grid[x + i][z + j] = TILE.GAP;
+            }
+        }
+    }
     for (var i = -radius; i <= radius; i++) {
         for (var j = -radius; j <= radius; j++) {
-            if (Math.abs(i + j) > radius ||
-                Math.abs(i - j) > radius)
-            {
-                //grid[x +i][z + j] = TILE.EMPTYGAP;
-                continue;
-            }
-            if (Math.abs(i + j) > innerRadius ||
-                Math.abs(i - j) > innerRadius)
+            if (Math.abs(i + j) < 1.5 * radius &&
+                Math.abs(i - j) < 1.5 * radius &&
+                grid[x +i][z + j] === TILE.EMPTY)
             {
                 grid[x + i][z + j] = TILE.STONE;
                 cubes.push(addWellTile(x + i, z + j));
-                continue;
             }
-            grid[x +i][z + j] = TILE.GAP;
         }
     }
     return cubes;
