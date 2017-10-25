@@ -20,6 +20,8 @@ scene.background = new THREE.Color(0x4286f4);
 var scale = 16;
 var camera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);
 camera.translateZ(2000); // Move back so camera is centered on 0, 0, 0
+camera.zoom = 0.3;
+camera.updateProjectionMatrix();
 
 var cam = new THREE.Object3D(); // Parent for camera to rotate/pan easier
 cam.add(camera);
