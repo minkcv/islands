@@ -181,42 +181,42 @@ function generateBridges(world, islandCenters) {
 var templates = [
     [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2], [2, 1], [2, 2]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2], [-1, 0], [0, -1], [-1, -1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1], [4, 3]],
+    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [-3, 3]],
     [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [2, 1], [2, 2], [1, 2], [2, 0], [0, -1], [1, -1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [1, 2], [0, -1]]
+    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [1, 2], [0, -1], [-2, -2], [-2, -1], [-2, 0], [-2, 1], [-1, -1], [-1, 1], [-1, 2], [0, 2]]
 ];
 
 // Should all have [0, 0] first.
 var rockTemplates = [
     [[0, 0], [-2, -3], [2, 4], [-2, 3]],
-    [[0, 0], [-1, 2], [4, -1], [2, 1], [-1, 3]],
+    [[0, 0], [-1, 2], [4, -1], [2, 1], [-2, -3]],
     [[0, 0], [-1, 3], [4, 2], [-2, 1], [3, -4]]
 ]
 
 function addBridge(startX, startZ, endX, endZ) {
-    var planes = [];
+    var cubes = [];
     if (startX > endX) { // -X direction
         for (var i = 0; i < startX - endX; i++) {
-            planes.push(addBridgeTile(startX - i, startZ, 1));
+            cubes.push(addBridgeTile(startX - i, startZ, 1));
         }
     }
     if (startZ > endZ) { // -Z direction
         for (var i = 0; i < startZ - endZ; i++) {
-            planes.push(addBridgeTile(startX, startZ - i, 1));
+            cubes.push(addBridgeTile(startX, startZ - i, 1));
         }
     }
     if (endX > startX) { // +X direction
         for (var i = 0; i < endX - startX; i++) {
-            planes.push(addBridgeTile(startX + i, startZ, 1));
+            cubes.push(addBridgeTile(startX + i, startZ, 1));
         }
     }
     if (endZ > startZ) { // +Z direction
         for (var i = 0; i < endZ - startZ; i++) {
-            planes.push(addBridgeTile(startX, startZ + i, 1));
+            cubes.push(addBridgeTile(startX, startZ + i, 1));
         }
     }
-    return planes;
+    return cubes;
 }
 
 function generateRocks(x, z) {
@@ -257,14 +257,13 @@ function addTile(x, z, height, tileType) {
 }
 
 function addBridgeTile(x, z) {
-    var geometry = new THREE.PlaneGeometry(blockSize, blockSize);
-    var plane = new THREE.Mesh( geometry, brownMaterial );
-    plane.position.x = x * blockSize + blockSize / 2;
-    plane.position.z = z * blockSize + blockSize / 2;
-    plane.position.y = 2;
-    plane.rotation.x = -Math.PI / 2;
+    var geometry = new THREE.BoxGeometry(blockSize, 1, blockSize);
+    var cube = new THREE.Mesh( geometry, brownMaterial );
+    cube.position.x = x * blockSize + blockSize / 2;
+    cube.position.z = z * blockSize + blockSize / 2;
+    cube.position.y = 1.5;
     grid[x][z] = TILE.BRIDGE;
-    return plane;
+    return cube;
 }
 
 function addWaterTile(x, z, length) {
