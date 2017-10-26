@@ -15,11 +15,14 @@ var TILE = {
     GAP:    'GAP  ', // Like empty, but won't be filled by code that generates things.
     STONE:  'STONE'
 };
-for (var i = 0; i < worldSize; i++) {
-    var arr = [];
-    for (var j = 0; j < worldSize; j++)
-        arr.push(TILE.EMPTY);
-    grid.push(arr);
+function initWorld() {
+    grid = [];
+    for (var i = 0; i < worldSize; i++) {
+        var arr = [];
+        for (var j = 0; j < worldSize; j++)
+            arr.push(TILE.EMPTY);
+        grid.push(arr);
+    }
 }
 
 function generateIslandGroup(x, z) {
