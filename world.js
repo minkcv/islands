@@ -1,7 +1,8 @@
+var bgColor = 0x134faf;
+var blueMaterial = new THREE.MeshBasicMaterial( { color: bgColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x34d369, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var blueMaterial = new THREE.MeshPhongMaterial( { color: 0x134faf, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0} );
 var grayMaterial = new THREE.MeshPhongMaterial( { color: 0x888888, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var tanMaterial = new THREE.MeshPhongMaterial( { color: 0xf2cf8e, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var worldSize = 500;
@@ -83,8 +84,16 @@ function generateIslandGroup(x, z) {
     }
     for (var i = 0; i < grid.length; i++) {
         var length = 0;
-        for (var j = 0; j < grid[i].length; j++) {
-            if (grid[i][j] === TILE.EMPTY) {
+        for (var j = 0; j < grid[0].length; j++) {
+            if (grid[i][j] === TILE.EMPTY)
+                grid[i][j] = TILE.WATER;
+        }
+    }
+    var waterMargin = 16;
+    for (var i = x - waterMargin; i < x + waterMargin; i++) {
+        var length = 0;
+        for (var j = z - waterMargin; j < z + waterMargin; j++) {
+            if (grid[i][j] === TILE.WATER) {
                 length++;
             }
             else if (length > 0){
