@@ -1,9 +1,8 @@
 var keysDown = [];
 var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, r: 82}
 addEventListener("keydown", function(e) {
-    if (e.keyCode == keys.r) {
-        initScene();
-    }
+    if (e.keyCode == keys.r)
+        location.reload();
     keysDown[e.keyCode] = true;
 }, false);
 
@@ -15,11 +14,19 @@ var threediv = document.getElementById('threediv');
 var width = threediv.clientWidth - 1;
 var height = threediv.clientHeight - 20;
 
-var scene = null;
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x4286f4);
+
 var scale = 16;
 var camera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);
+camera.translateZ(2000); // Move back so camera is centered on 0, 0, 0
+camera.zoom = 0.3;
+camera.updateProjectionMatrix();
+
 var cam = new THREE.Object3D(); // Parent for camera to rotate/pan easier
 cam.add(camera);
+scene.add(cam);
+
 var axes = new THREE.AxisHelper(3);
 cam.add(axes);
 
@@ -36,35 +43,21 @@ var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
-function initScene() {
-    scene = null;
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x4286f4);
+var world = generateIslandGroup(worldSize / 2, worldSize / 2);
+scene.add(world);
 
-    camera.position.set(0, 0, 0);
-    camera.translateZ(2000); // Move back so camera is centered on 0, 0, 0
-    camera.zoom = 0.3;
-    camera.updateProjectionMatrix();
+/*
+var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
+gridHelper.position.x = worldSize / 2 * blockSize;
+gridHelper.position.z = worldSize / 2 * blockSize;
+world.add(gridHelper);
+*/
 
-    scene.add(cam);
+var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
+light.position.set(1, 3, 2).normalize();
+world.add( light );
+world.add( light.target );
 
-
-    initWorld();
-    var world = generateIslandGroup(worldSize / 2, worldSize / 2);
-    scene.add(world);
-
-    /*
-    var gridHelper = new THREE.GridHelper(worldSize * 5, worldSize, 0x000000, 0x000000);
-    gridHelper.position.x = worldSize / 2 * blockSize;
-    gridHelper.position.z = worldSize / 2 * blockSize;
-    world.add(gridHelper);
-    */
-
-    var light = new THREE.DirectionalLight( 0xffffff, 1.0 );
-    light.position.set(1, 3, 2).normalize();
-    world.add( light );
-    world.add( light.target );
-}
 var rotateSpeed = 0.05;
 var moveSpeed = 1;
 var sprintFactor = 1;
@@ -124,6 +117,5 @@ function animate() {
 	update();
 	renderer.render( scene, camera );
 }
-initScene();
 animate();
 
