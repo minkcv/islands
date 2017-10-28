@@ -11,8 +11,8 @@ addEventListener("keyup", function(e) {
 }, false);
 
 var threediv = document.getElementById('threediv');
-var width = threediv.clientWidth - 1;
-var height = threediv.clientHeight - 20;
+var width = threediv.clientWidth;
+var height = threediv.clientHeight;
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x4286f4);
