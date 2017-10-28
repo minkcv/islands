@@ -1,5 +1,5 @@
 var bgColor = 0x134faf;
-var blueMaterial = new THREE.MeshBasicMaterial( { color: bgColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var blueMaterial = new THREE.MeshBasicMaterial( { color: bgColor, flatShading: true, overdraw: 0.5, opacity: 0.5, transparent: true } );
 var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x34d369, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0} );
@@ -51,7 +51,6 @@ function generateIslandGroup(x, z) {
             else if (dir == 3)
                 islandZ -= spacing;
 
-            
             if (islandX < margin)
                 islandX = margin;
             else if (islandX > worldSize - margin)
@@ -103,7 +102,7 @@ function generateIslandGroup(x, z) {
                 grid[i][j] = TILE.WATER;
         }
     }
-    var waterMargin = 16;
+    var waterMargin = 160;
     for (var i = x - waterMargin; i < x + waterMargin; i++) {
         var length = 0;
         for (var j = z - waterMargin; j < z + waterMargin; j++) {
@@ -203,13 +202,16 @@ function generateBridges(world, islandCenters) {
     }
 }
 
+var base = [[-2, -1], [-2, 0], [-2, 1], 
+            [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], 
+            [0, -2], [0, -1], [0, 0], [0, 1], [0, 2], 
+            [1, -2], [1, -1], [1, 0], [1, 1], [1, 2],
+            [2, -1], [2, 0], [2, 1]];
+
 var templates = [
-    [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2], [2, 1], [2, 2], [-1, 0], [0, -1], [-1, -1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [1, 2], [-1, 0], [0, -1], [-1, -1], [3, -2], [-2, 0], [-2, -1], [-2, 1], [0, -2], [1, -2], [-1, -2]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [2, 1], [4, 3], [-1, 0], [0, -1], [-2, 0], [-2, 1], [-2, 2], [-1, -1], [-1, 1], [-1, 2], [-1, 3], [2, 2], [1, 2], [0, 2], [0, 3]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [-3, 4], [0, -1], [0, -2], [0, 3], [1, 3], [2, 3], [-1, 3], [1, 4], [0, 2], [1, 2], [2, 2], [1, -1], [2, 4], [-1, -1]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [2, 1], [2, 2], [1, 2], [2, 0], [0, -1], [1, -1], [-1, 2], [-1, -1], [-1, 1], [0, 2], [0, 3], [1, 3]],
-    [[0, 0], [0, 1], [1, 0], [1, 1], [-1, 0], [1, 2], [0, -1], [-2, -2], [-2, -1], [-2, 0], [-2, 1], [-1, -1], [-1, 1], [-1, 2], [0, 2]]
+    base,
+    base.concat([[3, 3]]),
+    base.concat([[1, 3], [2, 3], [2, 4], [-3, 4]]),
 ];
 
 // Should all have [0, 0] first.
@@ -248,10 +250,15 @@ function generateRocks(x, z) {
     var template = rockTemplates[Math.floor(Math.random() * rockTemplates.length)];
     var cubes = [];
     var height = 2;
+    var y = -6;
     for (var i = 0; i < template.length; i++) {
+        height = 2 - y;
         if (i !== 0)
-            height = (Math.random() * 6) + 2;
-        cubes.push(addTile(x + template[i][0], 0, z + template[i][1], height, TILE.STONE));
+            height = (Math.random() * 10) - y ;
+        cubes.push(addTile(x + template[i][0], y, z + template[i][1], height, TILE.STONE));
+        y += (5 - Math.random() * 10);
+        if (y > -6)
+            y = -6;
     }
     return cubes;
 }
@@ -259,9 +266,14 @@ function generateRocks(x, z) {
 function generateIsland(x, z) {
     var template = templates[Math.floor(Math.random() * templates.length)];
     var cubes = [];
-    var height = 2;
+    var height = 12;
+    var y = -8;
     for (var i = 0; i < template.length; i++) {
-        cubes.push(addTile(x + template[i][0], 0, z + template[i][1], height, TILE.GRASS));
+        height = 2 - y;
+        cubes.push(addTile(x + template[i][0], y, z + template[i][1], height, TILE.GRASS));
+        y += (5 - Math.random() * 10);
+        if (y > -6)
+            y = -6;
     }
     if (Math.random() > 0.9)
         cubes.push(createTower(x, z));
@@ -340,7 +352,7 @@ function addWaterTile(x, z, length) {
 }
 
 function addWellTile(x, z) {
-    var height = 50;
+    var height = 40;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var cube = new THREE.Mesh( geometry, grayMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
