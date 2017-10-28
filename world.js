@@ -32,6 +32,7 @@ function generateIslandGroup(x, z) {
     var numIslands = 0;
     var maxIslands = 30;
     var emptySpaceChance = 0.5;
+    var posVariance = 1;
     islandCenters.push([x, z])
     var wellCubes = createWell(world, x, z);
     wellCubes.forEach(function(cube) {world.add(cube)});
@@ -49,6 +50,7 @@ function generateIslandGroup(x, z) {
                 islandZ += spacing;
             else if (dir == 3)
                 islandZ -= spacing;
+
             
             if (islandX < margin)
                 islandX = margin;
@@ -71,8 +73,19 @@ function generateIslandGroup(x, z) {
                 placed = true;
         }
 
-        islandCenters.push([islandX, islandZ]);
         if (Math.random() > emptySpaceChance) {
+            if (Math.random() > 0.5) {
+                if (Math.random() > 0.5)
+                    islandX += posVariance;
+                else
+                    islandX -= posVariance;
+            }
+            else {
+                if (Math.random() > 0.5)
+                    islandZ += posVariance;
+                else
+                    islandZ -= posVariance;
+            }
             var cubes = null;
             if (distance([islandX, islandZ], [x, z]) < 15)
                 cubes = generateRocks(islandX, islandZ);
@@ -81,6 +94,7 @@ function generateIslandGroup(x, z) {
             cubes.forEach(function(cube){ world.add(cube)});
             numIslands++;
         }
+        islandCenters.push([islandX, islandZ]);
     }
     for (var i = 0; i < grid.length; i++) {
         var length = 0;
@@ -154,7 +168,7 @@ function generateBridges(world, islandCenters) {
         var z = startZ;
         var direction = Math.floor(Math.random() * 4);
         var length = 0;
-        var maxBridgeLength = 30; // Should be at least islandSpacing
+        var maxBridgeLength = 20; // Should be at least islandSpacing
         var foundWater = false;
         var bridgeStartX = 0;
         var bridgeStartZ = 0;
