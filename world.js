@@ -102,7 +102,7 @@ function generateIslandGroup(x, z) {
                 grid[i][j] = TILE.WATER;
         }
     }
-    var waterMargin = 160;
+    var waterMargin = 60;
     for (var i = x - waterMargin; i < x + waterMargin; i++) {
         var length = 0;
         for (var j = z - waterMargin; j < z + waterMargin; j++) {
@@ -267,13 +267,15 @@ function generateIsland(x, z) {
     var template = templates[Math.floor(Math.random() * templates.length)];
     var cubes = [];
     var height = 12;
-    var y = -8;
+    var y = -14;
     for (var i = 0; i < template.length; i++) {
         height = 2 - y;
         cubes.push(addTile(x + template[i][0], y, z + template[i][1], height, TILE.GRASS));
-        y += (5 - Math.random() * 10);
+        y = -12 + (4 - Math.random() * 8);
         if (y > -6)
             y = -6;
+        if (y < -20)
+            y = -20;
     }
     if (Math.random() > 0.9)
         cubes.push(createTower(x, z));
@@ -352,7 +354,7 @@ function addWaterTile(x, z, length) {
 }
 
 function addWellTile(x, z) {
-    var height = 40;
+    var height = 50;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var cube = new THREE.Mesh( geometry, grayMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
