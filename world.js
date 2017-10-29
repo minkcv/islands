@@ -312,22 +312,13 @@ function createTree(x, z) {
 function createBuilding(x, z) {
     var cubes = [];
     var height = 12 + Math.random() * 3;
-    cubes.push(addTile(x, 2, z, height, TILE.BUILDING));
+    cubes.push(addTile(x - 1, 2, z - 1, height, TILE.BUILDING));
     height = 7 + Math.random() * 3;
-    if (Math.random() > 0.5) {
-        if (Math.random() > 0.5)
-            cubes.push(addTile(x + 1, 2, z, height, TILE.BUILDING));
-        else
-            cubes.push(addTile(x - 1, 2, z, height, TILE.BUILDING));
+    if (Math.random() > 0.5)
+        cubes.push(addTile(x + 1, 2, z - 1, height, TILE.BUILDING));
 
-        height -= 2;
-    }
-    if (Math.random() > 0.5) {
-        if (Math.random() > 0.5)
-            cubes.push(addTile(x, 2, z + 1, height, TILE.BUILDING));
-        else
-            cubes.push(addTile(x, 2, z - 1, height, TILE.BUILDING));
-    }
+    if (Math.random() > 0.5)
+        cubes.push(addTile(x - 1, 2, z + 1, height, TILE.BUILDING));
     return cubes;
 }
 
