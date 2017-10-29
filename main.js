@@ -36,8 +36,8 @@ cam.rotateX(-Math.PI / 4.0);
 axes.rotateX(Math.PI / 4.0);
 axes.rotateY(-Math.PI / 4.0);
 
-cam.position.x = worldSize / 2 * blockSize;
-cam.position.z = worldSize / 2 * blockSize;
+cam.position.x = worldSize / 2 * blockSize + blockSize / 2;
+cam.position.z = worldSize / 2 * blockSize + blockSize / 2;
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
