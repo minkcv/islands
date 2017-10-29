@@ -5,6 +5,7 @@ var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: t
 var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0} );
 var grayMaterial = new THREE.MeshPhongMaterial( { color: 0x888888, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var tanMaterial = new THREE.MeshPhongMaterial( { color: 0xf2cf8e, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var pinkMaterial = new THREE.MeshPhongMaterial( { color: 0xe87ae0, flatShading: true, overdraw: 0.5, shininess: 0 } );
 var worldSize = 500;
 var margin = 5;
 var blockSize = 5;
@@ -202,6 +203,11 @@ function generateBridges(world, islandCenters) {
     }
 }
 
+//  xxx
+// xxxxx
+// xxxxx
+// xxxxx
+//  xxx
 var base = [[-2, -1], [-2, 0], [-2, 1], 
             [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2], 
             [0, -2], [0, -1], [0, 0], [0, 1], [0, 2], 
@@ -212,6 +218,7 @@ var templates = [
     base,
     base.concat([[3, 3]]),
     base.concat([[1, 3], [2, 3], [2, 4], [-3, 4]]),
+    base.concat([[-1, 3], [1, -3], [-1, 4], [3, -1]]),
 ];
 
 // Should all have [0, 0] first.
@@ -278,20 +285,29 @@ function generateIsland(x, z) {
             y = -20;
     }
     if (Math.random() > 0.9)
-        cubes.push(createTower(x, z));
+        createTree(x, z).forEach(function(cube){cubes.push(cube)});
     else if (Math.random() > 0.5)
         createBuilding(x, z).forEach(function(cube){cubes.push(cube)});
     return cubes;
 }
 
-function createTower(x, z) {
-    var height = 30 + Math.random() * 3;
+function createTree(x, z) {
+    var cubes = [];
+    var height = 25 + Math.random() * 3;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
-    var cube = new THREE.Mesh( geometry, tanMaterial );
+    var cube = new THREE.Mesh( geometry, brownMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
     cube.position.y = height / 2;
-    return cube;
+    cubes.push(cube);
+
+    var geometry2 = new THREE.BoxGeometry(4 * blockSize, 3 * blockSize, 4 * blockSize);
+    var cube2 = new THREE.Mesh( geometry2, pinkMaterial );
+    cube2.position.x = x * blockSize + blockSize / 2;
+    cube2.position.z = z * blockSize + blockSize / 2;
+    cube2.position.y = height;
+    cubes.push(cube2);
+    return cubes;
 }
 function createBuilding(x, z) {
     var cubes = [];
@@ -354,7 +370,7 @@ function addWaterTile(x, z, length) {
 }
 
 function addWellTile(x, z) {
-    var height = 50;
+    var height = 50 + Math.random() * 16;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var cube = new THREE.Mesh( geometry, grayMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
