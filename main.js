@@ -43,7 +43,7 @@ var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(width, height);
 threediv.appendChild(renderer.domElement);
 
-var world = generateIslandGroup(worldSize / 2, worldSize / 2);
+var world = generateWorld();
 scene.add(world);
 
 /*

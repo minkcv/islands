@@ -19,15 +19,21 @@ var TILE = {
     STONE:    'STONE',
     BUILDING: 'BLDNG'
 };
-for (var i = 0; i < worldSize; i++) {
-    var arr = [];
-    for (var j = 0; j < worldSize; j++)
-        arr.push(TILE.EMPTY);
-    grid.push(arr);
+
+function generateWorld() {
+    grid = [];
+    for (var i = 0; i < worldSize; i++) {
+        var arr = [];
+        for (var j = 0; j < worldSize; j++)
+            arr.push(TILE.EMPTY);
+        grid.push(arr);
+    }
+    var world = new THREE.Object3D();
+    generateIslandGroup(world, worldSize / 2, worldSize / 2);
+    return world;
 }
 
-function generateIslandGroup(x, z) {
-    var world = new THREE.Object3D();
+function generateIslandGroup(world, x, z) {
     var islandCenters = []; // Has empty spaces too.
     var spacing = 10;
     var numIslands = 0;
