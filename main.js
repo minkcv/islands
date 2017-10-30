@@ -15,7 +15,7 @@ var width = threediv.clientWidth;
 var height = threediv.clientHeight;
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(bgColor);
+scene.background = new THREE.Color(defaultColors.waterColor);
 
 var scale = 16;
 var camera = new THREE.OrthographicCamera(width / -scale, width / scale, height / scale, height / -scale, 0, 4000);

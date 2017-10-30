@@ -32,15 +32,27 @@
     }
     #controls {
         left: 0px;
+        padding-left: 10px;
+        padding-bottom: 10px;
     }
     </style>
     </head>
     <body>
-        <div id="threediv"></div>
-        <div class="info" id="controls">&#8678&#8679&#8681&#8680 WASD</div>
-        <a href="http://minkcv.com" class="info" id="author">minkcv</a>
         <script src="three.min.js" type="text/javascript"></script>
         <script src="world.js" type="text/javascript"></script>
+        <div id="threediv"></div>
+        <div class="info" id="controls">
+            Controls: <br>
+            &#8678&#8679&#8681&#8680 and WASD <br>
+            Color Scheme: <br>
+            <select onchange="changeColor(this.options[this.selectedIndex].value)">
+                <option value="normal">Normal</option>
+                <option value="hell">Hellscape</option>
+                <option value="midnight">Midnight</option>
+            </select>
+        </div>
+        <a href="http://minkcv.com" class="info" id="author">minkcv</a>
+        
         <script src="main.js" type="text/javascript"></script>
     </body>
 </html>

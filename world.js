@@ -1,11 +1,53 @@
-var bgColor = 0x134faf;
-var blueMaterial = new THREE.MeshBasicMaterial( { color: bgColor, flatShading: true, overdraw: 0.5, opacity: 0.5, transparent: true } );
-var greenMaterial = new THREE.MeshPhongMaterial( { color: 0x34d369, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var redMaterial = new THREE.MeshPhongMaterial( { color: 0xf76942, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var brownMaterial = new THREE.MeshPhongMaterial( { color: 0x77551f, flatShading: true, overdraw: 0.5, shininess: 0} );
-var grayMaterial = new THREE.MeshPhongMaterial( { color: 0x888888, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var tanMaterial = new THREE.MeshPhongMaterial( { color: 0xf2cf8e, flatShading: true, overdraw: 0.5, shininess: 0 } );
-var pinkMaterial = new THREE.MeshPhongMaterial( { color: 0xe87ae0, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var colorSchemes = {
+    normal: {
+        wellLightColor: 0xf97522,
+        waterColor: 0x134faf,
+        islandColor: 0x34d369,
+        woodColor: 0x77551f,
+        stoneColor: 0x888888,
+        buildingColor: 0xf2cf8e,
+        treeLeafColor: 0xe87ae0
+    },
+    hell: {
+        wellLightColor: 0x00aaff,
+        waterColor: 0x7c2121,
+        islandColor: 0x7c0c0c,
+        woodColor: 0x353535,
+        stoneColor: 0x503030,
+        buildingColor: 0xe0e0e0,
+        treeLeafColor: 0x1c1c1c
+    },
+    midnight: {
+        wellLightColor: 0xf97522,
+        waterColor: 0x000c0c,
+        islandColor: 0x1c773a,
+        woodColor: 0x443112,
+        stoneColor: 0x666666,
+        buildingColor: 0x706042,
+        treeLeafColor: 0x6d3a6a
+    }
+}
+var defaultColors = colorSchemes.normal;
+var waterMaterial = new THREE.MeshBasicMaterial( { color: defaultColors.waterColor, flatShading: true, overdraw: 0.5, opacity: 0.5, transparent: true } );
+var islandMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.islandColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var woodMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.woodColor, flatShading: true, overdraw: 0.5, shininess: 0} );
+var stoneMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.stoneColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var buildingMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.buildingColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
+var treeLeafMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.treeLeafColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
+
+function changeColor(colorSchemeName) {
+    var cs = colorSchemes[colorSchemeName];
+    waterMaterial.color.set(cs.waterColor);
+    islandMaterial.color.set(cs.islandColor);
+    woodMaterial.color.set(cs.woodColor);
+    stoneMaterial.color.set(cs.stoneColor);
+    buildingMaterial.color.set(cs.buildingColor);
+    treeLeafMaterial.color.set(cs.treeLeafColor);
+    scene.background.set(cs.waterColor);
+    wellLights.forEach(function(light) {light.color.set(cs.wellLightColor)});
+}
+
+var wellLights = []; // So we can change their colors later.
 var worldSize = 500;
 var margin = 5;
 var blockSize = 5;
@@ -137,9 +179,10 @@ function distance(d1, d2) {
 }
 
 function createWell(world, x, z) {
-    var light = new THREE.PointLight( 0xf97522, 2, 10 * blockSize );
+    var light = new THREE.PointLight( defaultColors.wellLightColor, 2, 10 * blockSize );
     light.position.set(x * blockSize, -40, z * blockSize);
     world.add(light);
+    wellLights.push(light);
     var radius = 5;
     var innerRadius = 4;
     var cubes = [];
@@ -301,14 +344,14 @@ function createTree(x, z) {
     var cubes = [];
     var height = 25 + Math.random() * 3;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
-    var cube = new THREE.Mesh( geometry, brownMaterial );
+    var cube = new THREE.Mesh( geometry, woodMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
     cube.position.y = height / 2;
     cubes.push(cube);
 
     var geometry2 = new THREE.BoxGeometry(4 * blockSize, 3 * blockSize, 4 * blockSize);
-    var cube2 = new THREE.Mesh( geometry2, pinkMaterial );
+    var cube2 = new THREE.Mesh( geometry2, treeLeafMaterial );
     cube2.position.x = x * blockSize + blockSize / 2;
     cube2.position.z = z * blockSize + blockSize / 2;
     cube2.position.y = height;
@@ -332,11 +375,11 @@ function addTile(x, y, z, height, tileType) {
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
     var mat = null;
     if (tileType === TILE.GRASS)
-        mat = greenMaterial;
+        mat = islandMaterial;
     else if (tileType === TILE.STONE)
-        mat = grayMaterial;
+        mat = stoneMaterial;
     else if (tileType === TILE.BUILDING)
-        mat = tanMaterial;
+        mat = buildingMaterial;
     var cube = new THREE.Mesh( geometry, mat );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
@@ -347,7 +390,7 @@ function addTile(x, y, z, height, tileType) {
 
 function addBridgeTile(x, z) {
     var geometry = new THREE.BoxGeometry(blockSize, 1, blockSize);
-    var cube = new THREE.Mesh( geometry, brownMaterial );
+    var cube = new THREE.Mesh( geometry, woodMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
     cube.position.y = 1.5;
@@ -357,7 +400,7 @@ function addBridgeTile(x, z) {
 
 function addWaterTile(x, z, length) {
     var geometry = new THREE.PlaneGeometry(blockSize, blockSize * length);
-    var plane = new THREE.Mesh( geometry, blueMaterial );
+    var plane = new THREE.Mesh( geometry, waterMaterial );
     plane.position.x = x * blockSize + blockSize / 2;
     plane.position.z = z * blockSize - (length * blockSize / 2);
     plane.rotation.x = -Math.PI / 2;
@@ -369,7 +412,7 @@ function addWaterTile(x, z, length) {
 function addWellTile(x, z) {
     var height = 50 + Math.random() * 16;
     var geometry = new THREE.BoxGeometry(blockSize, height, blockSize);
-    var cube = new THREE.Mesh( geometry, grayMaterial );
+    var cube = new THREE.Mesh( geometry, stoneMaterial );
     cube.position.x = x * blockSize + blockSize / 2;
     cube.position.z = z * blockSize + blockSize / 2;
     cube.position.y = -height / 2 + 2;
