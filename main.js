@@ -3,6 +3,8 @@ var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, 
 addEventListener("keydown", function(e) {
     if (e.keyCode == keys.r)
         location.reload();
+    if (e.keyCode == keys.up || e.keyCode == keys.down) // Avoid scrolling color scheme box.
+        e.preventDefault();
     keysDown[e.keyCode] = true;
 }, false);
 
