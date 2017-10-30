@@ -45,6 +45,7 @@ function changeColor(colorSchemeName) {
     treeLeafMaterial.color.set(cs.treeLeafColor);
     scene.background.set(cs.waterColor);
     wellLights.forEach(function(light) {light.color.set(cs.wellLightColor)});
+    document.getElementById('color_scheme_changer').blur();
 }
 
 var wellLights = []; // So we can change their colors later.
