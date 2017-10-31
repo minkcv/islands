@@ -8,7 +8,7 @@ var colorSchemes = {
         buildingColor: 0xf2cf8e,
         treeLeafColor: 0xe87ae0
     },
-    hell: {
+    visceral: {
         wellLightColor: 0x00aaff,
         waterColor: 0x7c2121,
         islandColor: 0x7c0c0c,
@@ -34,7 +34,16 @@ var colorSchemes = {
         stoneColor: 0x839496,
         buildingColor: 0x2aa198,
         treeLeafColor: 0xcb4b16
-    }
+    },
+	marshes: {
+          wellLightColor: 0xdc9656,
+          waterColor: 0x7cafc2,
+          islandColor: 0xa1b56c,
+          woodColor: 0xa16946,
+          stoneColor: 0xb8b8b8,
+          buildingColor: 0xf7ca88,
+          treeLeafColor: 0xba8baf
+	}
 };
 var defaultColors = colorSchemes.normal;
 var waterMaterial = new THREE.MeshBasicMaterial( { color: defaultColors.waterColor, flatShading: true, overdraw: 0.5, opacity: 0.5, transparent: true } );
