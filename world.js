@@ -25,8 +25,17 @@ var colorSchemes = {
         stoneColor: 0x666666,
         buildingColor: 0x706042,
         treeLeafColor: 0x6d3a6a
+    },
+    lunar: {
+        wellLightColor: 0xd33682,
+        waterColor: 0x073642,
+        islandColor: 0xeee8d5,
+        woodColor: 0x6c71c4,
+        stoneColor: 0x839496,
+        buildingColor: 0x2aa198,
+        treeLeafColor: 0xcb4b16
     }
-}
+};
 var defaultColors = colorSchemes.normal;
 var waterMaterial = new THREE.MeshBasicMaterial( { color: defaultColors.waterColor, flatShading: true, overdraw: 0.5, opacity: 0.5, transparent: true } );
 var islandMaterial = new THREE.MeshPhongMaterial( { color: defaultColors.islandColor, flatShading: true, overdraw: 0.5, shininess: 0 } );
