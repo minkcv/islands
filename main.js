@@ -1,9 +1,15 @@
 var keysDown = [];
-var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, r: 82}
+var keys = { up: 38, down: 40, right: 39, left: 37, a: 65, s: 83, d: 68, w: 87, shift: 16, r: 82, f: 70 }
 addEventListener("keydown", function(e) {
     if (e.keyCode == keys.r)
         location.reload();
     keysDown[e.keyCode] = true;
+    if (keys.f in keysDown) {
+        if (flashLight.intensity == 0)
+            flashLight.intensity = 0.8;
+        else
+            flashLight.intensity = 0;
+    }
 }, false);
 
 addEventListener("keyup", function(e) {
@@ -30,11 +36,17 @@ scene.add(cam);
 var axes = new THREE.AxisHelper(3);
 cam.add(axes);
 
+var flashLight = new THREE.PointLight (0xffffff, 0, 6 * blockSize);
+cam.add(flashLight);
+
 // Setup isometric view
 cam.rotateY(Math.PI / 4.0);
 cam.rotateX(-Math.PI / 4.0);
 axes.rotateX(Math.PI / 4.0);
 axes.rotateY(-Math.PI / 4.0);
+flashLight.rotateX(Math.PI / 4.0);
+flashLight.rotateY(-Math.PI / 4.0);
+flashLight.translateY(2 * blockSize);
 
 cam.position.x = worldSize / 2 * blockSize + blockSize / 2;
 cam.position.z = worldSize / 2 * blockSize + blockSize / 2;
